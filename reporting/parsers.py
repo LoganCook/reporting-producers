@@ -12,7 +12,7 @@ from reporting.exceptions import InputDataError
 log = getLogger(__name__)
 
 class IParser(object):
-    def parse(self):
+    def parse(self, data):
         assert 0, "This method must be defined."
 
 class MatchParser(IParser):
@@ -28,7 +28,7 @@ class MatchParser(IParser):
         output['timestamp'] = int(time.time())
         output['hostname'] = get_hostname()
         return output
-    
+
 class SplitParser(IParser):
     def __init__(self, delimiter, transform):
         self.__delimiter=delimiter
@@ -43,7 +43,7 @@ class SplitParser(IParser):
         output['timestamp'] = int(time.time())
         output['hostname'] = get_hostname()
         return output
-    
+
 class DummyParser(IParser):
     def parse(self, data):
         output = {}
@@ -110,4 +110,4 @@ class JsonGrepParser(IParser):
             output[self.__list_name].extend(d)
         else:
             output[self.__list_name].append(d)
-        
+

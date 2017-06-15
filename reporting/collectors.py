@@ -175,12 +175,12 @@ class Collector(threading.Thread):
         return self.__schedule.check_trigger((t.year,t.month,t.day,t.hour,t.minute))
 
     def run(self):
-        count=self.__sleep_time
-        error_count=0
-        log.info("Collector %s has started."%self.__collector_name)
+        count = self.__sleep_time
+        error_count = 0
+        log.info("Collector %s has started.", self.__collector_name)
         while self.__running:
-            args={'config': self.__config['input']}
-            if (self.__schedule is None and count==self.__sleep_time) or self.match_time():
+            args = {'config': self.__config['input']}
+            if (self.__schedule is None and count == self.__sleep_time) or self.match_time():
                 log.debug("Starting to collect data.")
                 count = 0
                 data = None
@@ -188,38 +188,38 @@ class Collector(threading.Thread):
                 try:
                     data = self.__input.get_data(**args)
                     if isinstance(data, collections.deque) or isinstance(data, list):
-                        self.__current_data=[l.decode('ASCII','ignore') for l in data]
-                        payload=[]
-                        no_msgs=len(data)
+                        self.__current_data = [l.decode('ASCII', 'ignore') for l in data]
+                        payload = []
+                        no_msgs = len(data)
                         for line in data:
-                            log.debug("raw data %s"%line)
-                            payload.append(self.generate_payload(str(line.decode('ASCII','ignore'))))
-                        if len(payload)>0:
+                            log.debug("Raw data: %s", line)
+                            payload.append(self.generate_payload(str(line.decode('ASCII', 'ignore'))))
+                        if len(payload) > 0:
                             self.__output.push(payload)
                         else:
                             continue
                     else:
                         self.__current_data = data
-                        log.debug("Raw data %s" % data)
-                        payload = self.generate_payload(str(data.decode('ASCII','ignore')))
+                        log.debug("Raw data: %s", data)
+                        payload = self.generate_payload(str(data.decode('ASCII', 'ignore')))
                         self.__output.push(payload)
                 except:
                     self.__current_data = data
-                    log.exception('Unable to get or parse data. data: %s' % data)
+                    log.exception('Unable to get or parse data. data: %s', data)
                     error_count += 1
                     if self.__max_error_count > 0 and error_count >= self.__max_error_count:
                         self.__running = False
-                        self.__error_count == error_count
+                        self.__error_count = error_count
                         break
                     self.__number_failed += no_msgs
                     if self.__config['input']['type'] == 'tailer':
                         self.__input.fail(**args)
                 else:
-                    error_count=0
-                    self.__number_collected+=no_msgs
-                    if self.__config['input']['type']=='tailer':
+                    error_count = 0
+                    self.__number_collected += no_msgs
+                    if self.__config['input']['type'] == 'tailer':
                         self.__input.success(**args)
-                self.__error_count==error_count
+                self.__error_count = error_count
             else:
                 time.sleep(1)
                 if self.__schedule is None:
@@ -228,12 +228,13 @@ class Collector(threading.Thread):
             self.__sleep_count = count
 
         self.__output.close()
-        log.info("Collector %s has stopped." % self.__collector_name)
+        log.info("Collector %s has stopped.", self.__collector_name)
 
     def generate_payload(self, data):
         """Parse raw data and package the result in required format"""
         if self.__parser:
             data = self.__parser.parse(data)
+
         log.debug("parsed data %s", data)
         payload = {"id": str(uuid.uuid4()), "session": self.__session_id}
         payload['data'] = data
