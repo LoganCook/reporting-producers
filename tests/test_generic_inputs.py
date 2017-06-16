@@ -1,7 +1,5 @@
 import unittest
-import sys
 
-#sys.path.append('..')
 from reporting.collectors import CommandRunner, FileReader, HTTPReader
 
 
@@ -21,7 +19,7 @@ class GenericInputTestCase(unittest.TestCase):
 #         self.assertTrue('hostname' in output)
 #         self.assertTrue('hcp-chargeback' in output)
 #         self.assertDictEqual({"hcp-chargeback": output["hcp-chargeback"]}, {"hcp-chargeback": [u'chargebackData1',u'chargebackData2']})
-# 
+#
 #     def test_case3(self):
 #         parser=JsonGrepParser(pattern=". chargebackData", list_name="hcp-chargeback")
 #         input= '[{"chargebackData": 1}, {"chargebackData": 2}]'
@@ -31,6 +29,3 @@ class GenericInputTestCase(unittest.TestCase):
 #         self.assertTrue('hostname' in output)
 #         self.assertTrue('hcp-chargeback' in output)
 #         self.assertDictEqual({"hcp-chargeback": output["hcp-chargeback"]}, {"hcp-chargeback": [1, 2]})
-        
-if __name__ == '__main__':
-    unittest.main()

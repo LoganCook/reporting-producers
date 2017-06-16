@@ -1,7 +1,5 @@
 import unittest
-import sys
 
-#sys.path.append('..')
 from reporting.crontab import CronEvent
 
 
@@ -35,6 +33,3 @@ class CronEventTestCase(unittest.TestCase):
         self.assertTrue(cron3.numerical_tab[3]==set(xrange(1,13)))
         self.assertTrue(cron3.numerical_tab[4]==set(xrange(0,7)))
         self.assertTrue(cron3.check_trigger((2015,6,17,9,40)))
-        
-if __name__ == '__main__':
-    unittest.main()

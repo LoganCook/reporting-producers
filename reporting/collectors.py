@@ -198,9 +198,13 @@ class Collector(threading.Thread):
                         else:
                             continue
                     else:
+                        # a block of data: either string to be parsed or dict
                         self.__current_data = data
                         log.debug("Raw data: %s", data)
-                        payload = self.generate_payload(str(data.decode('ASCII', 'ignore')))
+                        if isinstance(data, str):
+                            payload = self.generate_payload(str(data.decode('ASCII', 'ignore')))
+                        else:
+                            payload = self.generate_payload(data)
                         self.__output.push(payload)
                 except:
                     self.__current_data = data
@@ -233,8 +237,8 @@ class Collector(threading.Thread):
         """Parse raw data and package the result in required format"""
         if self.__parser:
             data = self.__parser.parse(data)
+            log.debug("Parser %s parsed data %s: ", self.__parser.__class__.__name__, data)
 
-        log.debug("parsed data %s", data)
         payload = {"id": str(uuid.uuid4()), "session": self.__session_id}
         payload['data'] = data
         if 'metadata' in self.__config:

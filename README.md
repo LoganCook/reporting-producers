@@ -33,16 +33,17 @@ collector:
     - type: one of *file*, *command*, *tailer*
     - frequency: how often to collect
     - other key(s): depends on type, can have other keys, e.g. path of a file to read, or command detail
-  - parser
+  - parser: optional, called in `Collector::generate_payload` before sending out
   - output: one of output handlers defined at the top level
   - metadata
 - tailer: if input type is a tailer, database file name and related information
 - logging: logging related, verbose level: 0: error, 1: warning, 2: info. default: debug
 - output: output handler configuration
-  - kafka-http: Reporting API server (kafka's http front end)
-  - buffer: local cache that holds data temporarily before pushing to server
+  - kafka-http: Reporting API server (eRSA Kafka gateway)
+  - buffer: local cache that holds parsed data temporarily (without packaging)
+            before pushing to server. file names is message id.
   - file:  file output for testing (everything message will be saved into this file)
-- pusher: a pusher to push data in local cache, optional?
+- pusher: a pusher to push data in local cache
 
 
 ### Attributes of a `collector`
@@ -52,7 +53,11 @@ collector:
   - type: define the type of source from which information is collected
     - file: single file
     - command: an executable which generates information for collecting
-    - tailer: a directory with a tracking sqlite db to remember which file was the last processed
+    - tailer: a directory with a tracking sqlite database to remember which file was the last processed
+      - `collect_history_data`: only used when no tracker found - either new database or file is gone.
+         If is `True`, set the tracker to be the oldest, aka collect all files in the directory. If it is
+         `False`, set the tracker to be the newest in the directory, aka all files in the directory have
+         been collected. Default is `False`.
 
 
 ### Example config of a collector to parse one pbs accounting log
@@ -114,11 +119,17 @@ Example of an actual content of a message with extra optional keys:
 }
 ```
 
-### Library dependencies
+### Library dependencies on operating system
 
 Run this command to install them if on Debian like system:
 
 `sudo apt-get intall -y python-dev liblzma-dev`
+
+### Test
+
+Tests are designed to run with `nosetests`. So you can simply run `nosetests` or with a particular one:
+
+`nosetests tests/test_plug_slurm.py`
 
 ### Run it
 

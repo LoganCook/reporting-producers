@@ -1,7 +1,5 @@
 import unittest
-import sys
 
-#sys.path.append('..')
 from reporting.parsers import JsonGrepParser
 
 
@@ -46,6 +44,3 @@ class JsonGrepParserTestCase(unittest.TestCase):
         self.assertTrue(len(output["hcp-chargeback"])==2)
         self.assertTrue(output["hcp-chargeback"][0]==1)
         self.assertTrue(output["hcp-chargeback"][1]==2)
-
-if __name__ == '__main__':
-    unittest.main()
