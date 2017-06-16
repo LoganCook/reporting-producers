@@ -114,7 +114,6 @@ class Collector(threading.Thread):
                 raise AttributeError("Missing tailer in config file for tailer type input")
             self.__input=tailer
 
-        print(self.__input)
         assert(self.__input)
 
         if 'parser' in self.__config:

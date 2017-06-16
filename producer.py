@@ -2,7 +2,10 @@
 
 # pylint: disable=broad-except
 
-import os, sys, time, signal
+import os
+import sys
+import time
+import signal
 import logging
 import logging.handlers
 import yaml
@@ -15,7 +18,7 @@ from getopt import GetoptError
 from daemon import Daemon
 from reporting.utilities import getLogger, excepthook, get_log_level, set_global, init_object
 from reporting.__version__ import version
-from reporting.outputs import KafkaHTTPOutput, BufferOutput, FileOutput, BufferThread
+from reporting.outputs import KafkaHTTPOutput, BufferOutput, FileOutput, BufferThread, HCPOutput
 from reporting.pusher import Pusher
 from reporting.collectors import Collector
 from reporting.tailer import Tailer
@@ -78,6 +81,8 @@ class ProducerDaemon(Daemon):
                 self.__outputs[n] = BufferOutput(cfg)
             elif n == 'kafka-http':
                 self.__outputs[n] = KafkaHTTPOutput(cfg)
+            elif n == 'hcp':
+                self.__outputs[n] = HCPOutput(cfg)
             elif n == 'file':
                 self.__outputs[n] = FileOutput(cfg)
             elif 'class' in cfg:
@@ -119,7 +124,7 @@ class ProducerDaemon(Daemon):
         if 'collector' in config:
             for collector_config in config['collector']:
                 log.debug("Initiating collector %s", collector_config)
-                log.debug("self.__outputs: %s", self.__outputs)
+                log.debug("Output object: %s", self.__outputs)
                 c = Collector(collector_config, config['collector'][collector_config],
                               self.__outputs[config['collector'][collector_config]['output']],
                               self.__tailer)

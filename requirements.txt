@@ -1,1 +1,4 @@
+# need python-dev liblzma-dev for compiling backports.lzma
 PyYAML
+backports.lzma
+boto

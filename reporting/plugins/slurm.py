@@ -11,5 +11,5 @@ class SlurmParser(IParser):
         print data
         output = init_message()
         output['slurm'] = 'content to come'
-        raise ValueError('No parsing logic for data')
+        # raise ValueError('No parsing logic for data')
         return output

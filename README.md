@@ -29,7 +29,10 @@ collector:
 
 - global
 - collector: aka producers and each has:
-  - input
+  - input:
+    - type: one of *file*, *command*, *tailer*
+    - frequency: how often to collect
+    - other key(s): depends on type, can have other keys, e.g. path of a file to read, or command detail
   - parser
   - output: one of output handlers defined at the top level
   - metadata
@@ -50,6 +53,26 @@ collector:
     - file: single file
     - command: an executable which generates information for collecting
     - tailer: a directory with a tracking sqlite db to remember which file was the last processed
+
+
+### Example config of a collector to parse one pbs accounting log
+
+```yaml
+collector:
+    pbs_accounting_log:
+        input:
+            type: file
+            path: /home/user/Documents/ersa/reporting-producers/tests/data/pbs_accounting_log/20160102
+            collect_history_data: True
+            frequency: 1
+        parser:
+            type: class
+            name: reporting.plugins.pbs.AccountingLogParser
+        output: buffer
+        metadata:
+            schema: pbs.accounting.log
+            version: 1
+```
 
 ### Expected JSON structure with all required keys:
 
@@ -89,4 +112,19 @@ Example of an actual content of a message with extra optional keys:
     "mb/s": 2.47
   }
 }
+```
+
+### Library dependencies
+
+Run this command to install them if on Debian like system:
+
+`sudo apt-get intall -y python-dev liblzma-dev`
+
+### Run it
+
+By default it runs in non-daemon mode. You can change it to run in daemon mode by call it with `-b` or `--background`
+
+```shell
+# run it in foreground with highest logging verbose level
+./producer.py -c config.yaml -vvv -f
 ```

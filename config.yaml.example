@@ -368,7 +368,7 @@ collector:
         output: buffer
         metadata:
             schema: cinder.list
-            version: 1    
+            version: 1
     swift_usage:
         input:
             type: class
@@ -412,6 +412,14 @@ output:
     # file output for testing (everything message will be saved into this file)
     file:
         path: /mnt/producer/out
+    # HCP client
+    hcp:
+        url: s3.ersa.edu.au
+        bucket: archive
+        prefix: test
+        id: test
+        secret: test
+        timeout: 10
 
 # a pusher to push data in local cache
 pusher:
