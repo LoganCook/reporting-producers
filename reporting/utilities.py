@@ -73,7 +73,7 @@ def formatExceptionInfo():
 def init_message():
     return {'timestamp': int(time.time()), 'hostname': get_hostname()}
 
-def init_object(class_name, **arguments):
+def init_object(class_name, *args, **kwargs):
     mod_name = '.'.join(class_name.split('.')[:-1])
     class_name = class_name.split('.')[-1]
     log.debug("Loading plugin %s %s"%(mod_name, class_name))
@@ -93,7 +93,7 @@ def init_object(class_name, **arguments):
         raise PluginInitialisationError(
             'Plugin class %s does not exist' % class_name)
     try:
-        return klass(**arguments)
+        return klass(*args, **kwargs)
     except Exception as exc:
         raise PluginInitialisationError(
             "Failed to load plugin %s with "
