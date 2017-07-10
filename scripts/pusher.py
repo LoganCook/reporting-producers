@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# pylint: disable=invalid-name
 """Take a input, parse it and push it"""
 
 import argparse
@@ -9,12 +10,11 @@ import logging
 import logging.handlers
 import yaml
 
-# To allow to run from package's top location: script/pusher.py
+# To allow running from package's top location: script/pusher.py
 sys.path.insert(1, ".")
 
 from reporting.utilities import getLogger, get_log_level, init_object
-# from reporting.outputs import KafkaHTTPOutput, BufferOutput, FileOutput, BufferThread, HCPOutput
-# from reporting.pusher import Pusher
+from utils import generate_payload
 
 log = getLogger(__name__)
 LOG_FORMAT = '%(asctime)s %(levelname)s %(module)s %(filename)s %(lineno)d: %(message)s'
@@ -24,11 +24,16 @@ LOG_FORMATTER = logging.Formatter(LOG_FORMAT, SAN_MS_DATE)
 def create_input(input_config, **kwargs):
     # Only support class type now
     # these class needs to take whatever caller set
-    assert input_config['type'] == 'class'
+    assert 'class' in input_config
     if kwargs is None:
         if 'arguments' in input_config:
             kwargs = input_config['arguments']
-    return init_object(input_config['name'], **kwargs)
+    return init_object(input_config['class'], **kwargs)
+
+
+def create_output_handler(output_config):
+    # Create an output handler by the full name of class
+    return init_object(output_config['class'], output_config['arguments'])
 
 
 if __name__ == "__main__":
@@ -46,18 +51,18 @@ if __name__ == "__main__":
     # input and output can take any supported in reporting package.
     # See reporting package for more deatails.
     # input:
-    #     type: class
-    #     name: reporting.plugins.slurm.SlurmInput
+    #     class: reporting.plugins.slurm.SlurmInput
     #     arguments:
     #         path: tests/sacct-with-start-end.txt
     # output:
-    #   hcp:
-    #     url: s3.ersa.edu.au
-    #     bucket: mybucket
-    #     prefix: test
-    #     id: myid
-    #     secret: mysecret
-    #     timeout: 10
+    #     class: reporting.outputs.HCPOutput
+    #     arguments:
+    #       url: s3.ersa.edu.au
+    #       bucket: mybucket
+    #       prefix: test
+    #       id: myid
+    #       secret: mysecret
+    #       timeout: 10
     # metadata:
     #     schema: hpc.slurm
     #     version: 1
@@ -104,5 +109,9 @@ if __name__ == "__main__":
 
     log.debug(config)
 
-    slurm = create_input(config['input'], path='xx')
-    slurm.get_data()
+    slurm = create_input(config['input'], path='tests/sacct-with-start-end.txt')
+    payload = generate_payload(slurm.get_data(), config['metadata'])
+
+    log.debug(payload)
+    output_handler = create_output_handler(config['output'])
+    output_handler.push(payload)
