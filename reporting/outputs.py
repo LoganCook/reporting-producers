@@ -128,11 +128,25 @@ class CheckDir(object):
 class BufferOutput(IOutput):
     """Stage data prior to upload."""
     def __init__(self, config):
+        self._verify(config)
         self.directory = config['directory']
         self.check_dir = CheckDir(config['directory'], config['size'])
-        self.log_space_warning=False
-        self.queue=[]
+        self.log_space_warning = False
+        self.queue = []
         self.write_lock = threading.Lock()
+
+    def _verify(self, config):
+        """Verify directory in configuration and create directory if needed"""
+        if not 'directory' in config:
+            log.exception("ERROR: BufferOutput - buffer directory not specified in config.")
+
+        buffer_dir = config['directory']
+        if os.path.exists(buffer_dir) and (not os.path.isdir(buffer_dir)):
+            log.exception("ERROR: BufferOutput - buffer directory exists but it is not a directory.")
+
+        if not os.path.exists(buffer_dir):
+            log.info("BufferOutput - creating buffer directory %s.", buffer_dir)
+            os.makedirs(buffer_dir)
 
     def push(self, data):
         with self.write_lock:
