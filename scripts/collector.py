@@ -2,29 +2,16 @@
 #!/usr/bin/env python
 
 # pylint: disable=star-args
-import logging
-import sys
-
-# To allow running from package's top location: script/pusher.py
-sys.path.insert(1, ".")
-
 import collections
 
+from utils import create_logger, create_output, generate_payload, read_config_file
 from reporting.collectors import CommandRunner, HTTPReader, FileReader
 from reporting.parsers import MatchParser, SplitParser, DummyParser, JsonGrepParser
 from reporting.tailer import Tailer
-from reporting.utilities import getLogger, init_object
+from reporting.utilities import init_object
 
-from utils import create_output, generate_payload, read_config_file
 
-# FIXME: default, move to utils
-log = getLogger(__name__)
-LOG_FORMAT = '%(asctime)s %(levelname)s %(module)s %(filename)s %(lineno)d: %(message)s'
-SAN_MS_DATE = '%Y-%m-%d %H:%M:%S'
-LOG_FORMATTER = logging.Formatter(LOG_FORMAT, SAN_MS_DATE)
-
-log_handler = logging.StreamHandler(sys.stderr)
-log.addHandler(log_handler)
+log = None
 
 class Collector(object):
     """Collect from an input, process it and push by an output"""
@@ -139,6 +126,6 @@ class Collector(object):
 
 if __name__ == "__main__":
     config = read_config_file()
-    print config
+    log = create_logger(__name__, config)
     slurm_collector = Collector(config)
     slurm_collector.collect()

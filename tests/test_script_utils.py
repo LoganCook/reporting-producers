@@ -3,7 +3,7 @@
 import unittest
 import sys
 
-from scripts.utils import read_config_file, generate_payload
+from scripts.utils import read_config_file, generate_payload, create_logger
 
 class UtilsTestCase(unittest.TestCase):
     """Test cases for read_config_file"""
@@ -19,3 +19,8 @@ class UtilsTestCase(unittest.TestCase):
             self.assertIn(required, payload)
 
         self.assertEqual(payload['data'], [])
+
+    def test_default_logger(self):
+        log = create_logger(__name__, {})
+        self.assertTrue(log.isEnabledFor(10))  # logging.DEBUG
+        self.assertTrue(hasattr(log.handlers[0], 'stream'))
