@@ -131,11 +131,57 @@ Tests are designed to run with `nosetests`. So you can simply run `nosetests` or
 
 `nosetests tests/test_plug_slurm.py`
 
-### Run it
+### Run `producer.py`
 
 By default it runs in non-daemon mode. You can change it to run in daemon mode by call it with `-b` or `--background`
 
 ```shell
 # run it in foreground with highest logging verbose level
 ./producer.py -c config.yaml -vvv -f
+```
+
+#### Scripts
+
+Some [scripts](scripts) were created for simple tasks.
+  1. [`pusher.py`](scripts/pusher.py) is a demo of reading a file, packaging and pushing.
+     In this case, you can say only what input class you need without providing initialization arguments
+     in the config file. *`input` in config usually has one key-value: `class: what.class`, DOES NOT have
+     type key-value pair. This is different to the config used by `collector.py`*
+  2. [`collector.py`](scripts/collector.py) is a demo of how to do what `producer.py` does but just once.
+
+These scripts use reduced configuration files: they still have at least three sections: *input*, *output*, *metadata*.
+Even omitting *metadata* will not stop code running but it should be set. *parse* and *logging* are optional.
+See reporting package for more details.
+
+**Note**: the names of arguments have to match what they are called when an *input* or *parser* is initialised because
+these scripts DO NOT translate them as they are done in [collectors.py](reporting/collectors.py).
+
+For *input*, if it has *arguments*, one of its key-value pairs can be overridden at run time by calling script with:
+`--key KEY --value VALUE`. This is useful when one of `input->arguments` is treated as a default for a collector.
+For example, if a collector is to collect a different file every month, you can define a default
+`path: tests/sacct-with-start-end.txt` in `config.yaml` as a place holder, call it by overriding `path` argument like this
+
+`./producer.py -c config.yaml --key path --value my_other_file_path`.
+
+if `config.yaml` is:
+
+```yaml
+input:
+    class: reporting.plugins.slurm.SlurmInput
+    arguments:
+        path: tests/sacct-with-start-end.txt
+metadata:
+    schema: hpc.slurm
+    version: 1
+output:
+    class: reporting.outputs.HCPOutput
+    arguments:
+      url: s3.ersa.edu.au
+      bucket: mybucket
+      prefix: test
+      id: myid
+      secret: mysecret
+      timeout: 10
+logging:
+    log_format: "%(asctime)s - %(levelname)s - %(filename)s - %(lineno)d - %(processName)s - %(threadName)s - %(message)s"
 ```

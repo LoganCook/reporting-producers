@@ -125,6 +125,7 @@ class Collector(object):
         return generate_payload(data, self.metadata)
 
 if __name__ == "__main__":
+    # A demo code to show how Collector is used
     config = read_config_file()
     log = create_logger(__name__, config)
     slurm_collector = Collector(config)

@@ -90,9 +90,22 @@ def generate_payload(data, metadata=None):
 def read_config_file():
     """Parse command line argument -c or --conf to get a configuration dict"""
     parser = argparse.ArgumentParser(
-        description='Parse an input, e.g. a file and push to a target.')
+        description=('Collect and parse an input, e.g. a file and push to a target defined in config file. '
+                     'At runtime, you can change ONE input argument defined in config file '
+                     'if you set --key KEY AND --value VALUE, input.arguments.KEY will '
+                     'be replaced by VALUE without the need of editing config file.'))
     parser.add_argument('-c', '--conf', default='config.yaml',
                         help='Path to config yaml file. Default = config.yaml')
+
+    # Provide runtime overwrite of key-value pair in arguments of input in config file.
+    # Say, you have a cron job which creates a file to be collected with different name
+    # not defined in config file. If the name is shell variable, $output, you can call
+    # from your cron like this:
+    # python scripts/collector.py -c config.collector.runonce.yaml --key path --value $output
+    parser.add_argument('--key', default='',
+                        help='What *arguments* key to be overwritten in *input* of the config file')
+    parser.add_argument('--value', default='',
+                        help='What value to be set for the overwrite *arguments* key in *input* of the config file')
 
     args = parser.parse_args()
     config_file = args.conf
@@ -100,4 +113,14 @@ def read_config_file():
     if not os.path.exists(config_file) or not os.path.isfile(config_file):
         sys.exit("Config file %s does not exist or is not a file." % config_file)
 
-    return yaml.load(open(config_file, "r"))
+    config = yaml.load(open(config_file, "r"))
+
+    if 'arguments' in config['input'] and args.key and args.value:
+        if args.key in config['input']['arguments']:
+            config['input']['arguments'][args.key] = args.value
+        else:
+            keys = ','.join(config['input']['arguments'].keys())
+            sys.exit('Unknown key %s for input.arguments. Key(s) can be overwrite: \t %s'
+                     % (args.key, keys))
+
+    return config

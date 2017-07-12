@@ -1,0 +1,19 @@
+input:
+  type: class
+  name: reporting.plugins.slurm.SlurmInput
+  arguments:
+    path: tests/sacct-with-start-end.txt
+output:
+  class: reporting.outputs.HCPOutput
+  arguments:
+    url: some_value
+    bucket: some_value
+    id: some_value
+    prefix: some_value
+    secret: some_value
+    timeout: some_value
+metadata:
+  schema: hpc.slurm
+  version: 1
+logging:
+  log_format: "%(asctime)s - %(levelname)s - %(filename)s - %(lineno)d - %(processName)s - %(threadName)s - %(message)s"
