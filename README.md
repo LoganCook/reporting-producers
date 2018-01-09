@@ -123,11 +123,11 @@ Example of an actual content of a message with extra optional keys:
 
 Run this command to install them if on Debian like system:
 
-`sudo apt-get intall -y python-dev liblzma-dev`
+`sudo apt-get install -y python-dev liblzma-dev`
 
 ### Test
 
-Tests are designed to run with `nosetests`. So you can simply run `nosetests` or with a particular one:
+Tests are designed to run with `nosetests` (an optional dependency). So you can simply run `nosetests` or with a particular one:
 
 `nosetests tests/test_plug_slurm.py`
 
@@ -149,7 +149,8 @@ Some [scripts](scripts) were created for simple tasks.
      type key-value pair. This is different to the config used by `collector.py`*
   2. [`collector.py`](scripts/collector.py) is a demo of how to do what `producer.py` does but just once.
 
-These scripts use reduced configuration files: they still have at least three sections: *input*, *output*, *metadata*.
+These scripts use reduced configuration files (an example is `config.runonce.yaml.exaple`): they still
+have at least three sections: *input*, *output*, *metadata*.
 Even omitting *metadata* will not stop code running but it should be set. *parse* and *logging* are optional.
 See reporting package for more details.
 
@@ -161,7 +162,7 @@ For *input*, if it has *arguments*, one of its key-value pairs can be overridden
 For example, if a collector is to collect a different file every month, you can define a default
 `path: tests/sacct-with-start-end.txt` in `config.yaml` as a place holder, call it by overriding `path` argument like this
 
-`./producer.py -c config.yaml --key path --value my_other_file_path`.
+`python scripts/collector.py -c config.yaml --key path --value my_other_file_path`.
 
 if `config.yaml` is:
 
