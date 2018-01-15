@@ -1,6 +1,10 @@
 language: python
 python:
-  - "2.6"
+#  - "2.6"
+# Python 2.6 is not required for XFS plugin.
+# As it is not actively developed and no tests for it
+# skip 2.6 tests until it is needed. Otherwise, too
+# many false positive.
   - "2.7"
   - "pypy"
 install: "pip install -r requirements.txt"
