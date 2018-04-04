@@ -1,5 +1,6 @@
 """VMS report from VRB"""
 
+from math import ceil
 import xlrd
 
 from reporting.collectors import IDataSource
@@ -64,9 +65,9 @@ class VMSInput(IDataSource):
                 for k in cls.MAPPING_KEYS:
                     filtered[cls.MAPS[k]] = vm[k]
                 for k in cls.INT_TYPES:
-                    filtered[k] = int(filtered[k])
+                    filtered[k] = ceil(float(filtered[k]))
                 vms_with_filtered_fields.append(filtered)
-        
+
         return vms_with_filtered_fields
 
     def get_data(self, **kwargs):
