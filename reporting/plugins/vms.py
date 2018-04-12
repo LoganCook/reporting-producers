@@ -17,6 +17,7 @@ class VMSInput(IDataSource):
 
     MAPS = {
         'Monthly Up Time (Hours)': 'span',
+        'Monthly Up Time (%)': 'uptime_percent',
         'VM MOID': 'server_id',
         'vCPUs': 'core',
         'RAM GB (Configured)': 'ram',
