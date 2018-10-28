@@ -17,5 +17,5 @@ class VMSTestCase(unittest.TestCase):
         self.assertTrue(isinstance(data['instances'], list))
         self.assertEqual(21, len(data['instances']))
         vm = data['instances'][0]
-        for required_key in ('span', 'server_id', 'core', 'ram', 'storage', 'os', 'server', 'business_unit', 'month'):
+        for required_key in ('span', 'server_id', 'core', 'ram', 'storage', 'os', 'server', 'business_unit', 'month', 'uptime_percent'):
             self.assertIn(required_key, vm)
