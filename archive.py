@@ -4,8 +4,6 @@ Archive messages compress with lzma to HCP using boto.
 
 # pylint: disable=too-few-public-methods,too-many-arguments
 
-import base64
-import hashlib
 import io
 import json
 
