@@ -214,8 +214,8 @@ class BufferThread(threading.Thread):
                  datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y"))
 
 
-class HCPOutput(IOutput):
-    """HCP client for uploading packages."""
+class AWSOutput(IOutput):
+    """AWS client for uploading packages."""
 
     def __init__(self, config):
         self.attempts = config.get("attempts", 3)

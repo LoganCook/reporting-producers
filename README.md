@@ -175,7 +175,7 @@ metadata:
     schema: hpc.slurm
     version: 1
 output:
-    class: reporting.outputs.HCPOutput
+    class: reporting.outputs.AWSOutput
     arguments:
       url: s3.ersa.edu.au
       bucket: mybucket

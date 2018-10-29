@@ -412,8 +412,8 @@ output:
     # file output for testing (everything message will be saved into this file)
     file:
         path: /mnt/producer/out
-    # HCP client
-    hcp:
+    # AWS client
+    aws:
         url: s3.ersa.edu.au
         bucket: archive
         prefix: test
