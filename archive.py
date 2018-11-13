@@ -12,12 +12,6 @@ from backports import lzma
 from boto.s3.connection import S3Connection
 
 
-# HCP #facepalm
-import ssl
-if hasattr(ssl, '_create_unverified_context'):
-    ssl._create_default_https_context = ssl._create_unverified_context
-
-
 class Archive(object):
     """Save content lzma compressed at default level to object store through boto."""
 
