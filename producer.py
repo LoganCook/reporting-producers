@@ -18,7 +18,7 @@ from getopt import GetoptError
 from daemon import Daemon
 from reporting.utilities import getLogger, excepthook, get_log_level, set_global, init_object
 from reporting.__version__ import version
-from reporting.outputs import KafkaHTTPOutput, BufferOutput, FileOutput, BufferThread, HCPOutput
+from reporting.outputs import KafkaHTTPOutput, BufferOutput, FileOutput, BufferThread, AWSOutput
 from reporting.pusher import Pusher
 from reporting.collectors import Collector
 from reporting.tailer import Tailer
@@ -81,8 +81,8 @@ class ProducerDaemon(Daemon):
                 self.__outputs[n] = BufferOutput(cfg)
             elif n == 'kafka-http':
                 self.__outputs[n] = KafkaHTTPOutput(cfg)
-            elif n == 'hcp':
-                self.__outputs[n] = HCPOutput(cfg)
+            elif n == 'aws':
+                self.__outputs[n] = AWSOutput(cfg)
             elif n == 'file':
                 self.__outputs[n] = FileOutput(cfg)
             elif 'class' in cfg:

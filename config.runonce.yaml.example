@@ -4,7 +4,7 @@ input:
   arguments:
     path: tests/sacct-with-start-end.txt
 output:
-  class: reporting.outputs.HCPOutput
+  class: reporting.outputs.AWSOutput
   arguments:
     url: some_value
     bucket: some_value
